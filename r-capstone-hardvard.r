@@ -11,6 +11,11 @@ if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-
 if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
 if(!require(purrr)) install.packages("purrr", repos = "http://cran.us.r-project.org")
 
+if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
+if(!require(RColorBrewer)) install.packages("RColorBrewer", repos = "http://cran.us.r-project.org")
+if(!require(dslabs)) install.packages("dslabs", repos = "http://cran.us.r-project.org")
+
+
 # Only for re-run
 # rm(edx, validation)
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
@@ -51,7 +56,7 @@ movielens <- left_join(ratings, movies, by = "movieId")
 rm(ratings, movies)
 
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
-# Data transformation                                                          #
+# Preparing Data                                                               #
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
 # ADD NEW COLUMNS                                                              #
 # The new columns has the same information that 'genres' column & 'timestamp'  #
@@ -113,7 +118,16 @@ edx <- rbind(edx, removed)
 rm(test_index, temp, movielens, removed)
 
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
-# Data transformation                                                          #
+# Data Analysis                                                                #
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
+# mean of ratings by year of movie premiere
+edx %>% 
+    group_by(movie_year) %>% 
+    summarize(mean_rating = mean(rating)) %>% 
+    ggplot(aes(movie_year,
+               mean_rating)) +
+    geom_line()
+    ggtitle('Mean reating by year of movie premiere') +
+    xlab('Year of movie premiere') +
+    ylab('Mean rating')
 
-rating_by_year <- 
