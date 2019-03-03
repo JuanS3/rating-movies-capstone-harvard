@@ -120,14 +120,36 @@ rm(test_index, temp, movielens, removed)
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
 # Data Analysis                                                                #
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
-# mean of ratings by year of movie premiere
-edx %>% 
+# mean of ratings per year by movies premiere and by users ratings
+graph_myear <- edx %>% 
     group_by(movie_year) %>% 
-    summarize(mean_rating = mean(rating)) %>% 
-    ggplot(aes(movie_year,
-               mean_rating)) +
-    geom_line()
-    ggtitle('Mean reating by year of movie premiere') +
-    xlab('Year of movie premiere') +
+    summarize(mean_rating = mean(rating)) 
+colnames(graph_myear) <- c('year', 'movie_rating')
+
+graph_ryear <- edx %>% 
+    group_by(rating_year) %>% 
+    summarize(mean_rating = mean(rating))
+colnames(graph_ryear) <- c('year', 'user_rating')
+
+graph_year <- left_join(graph_myear, graph_ryear, 'year')
+
+rm(graph_myear, graph_ryear, graph_countryear)
+
+graph_year %>% 
+    ggplot(aes(year)) +
+    geom_line(aes(y = movie_rating, colour = 'movie premiere')) +
+    geom_line(aes(y = user_rating,  colour = 'user rating')) +
+    geom_point(aes(y = movie_rating, colour = 'movie premiere')) +
+    geom_point(aes(y = user_rating, colour = 'user rating')) +
+    ggtitle('Mean reating per year of the movie premiere and user rating per year') +
+    xlab('Year') +
     ylab('Mean rating')
 
+# Total users ratings per year
+edx %>% 
+    group_by(rating_year) %>% 
+    summarize(total_ratings = n()) %>% 
+    ggplot(aes(rating_year, total_ratings)) +
+    geom_line() + geom_point() +
+    xlab('Year') +
+    ylab('Total ratings')
