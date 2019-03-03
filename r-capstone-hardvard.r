@@ -133,23 +133,48 @@ colnames(graph_ryear) <- c('year', 'user_rating')
 
 graph_year <- left_join(graph_myear, graph_ryear, 'year')
 
-rm(graph_myear, graph_ryear, graph_countryear)
+rm(graph_myear, graph_ryear)
 
 graph_year %>% 
     ggplot(aes(year)) +
+    # mean of ratings per year by movies premiere
     geom_line(aes(y = movie_rating, colour = 'movie premiere')) +
-    geom_line(aes(y = user_rating,  colour = 'user rating')) +
     geom_point(aes(y = movie_rating, colour = 'movie premiere')) +
+    geom_label(aes(y = movie_rating,
+                  label = round(movie_rating, digits = 1),
+                  fontface = 'bold'),
+             nudge_y = 0.004,
+             colour = 'white',
+             fill = 'red',
+             alpha = 0.7) +
+    # mean of ratings per year by users ratings
+    geom_line(aes(y = user_rating,  colour = 'user rating')) +
     geom_point(aes(y = user_rating, colour = 'user rating')) +
+    geom_label(aes(y = user_rating,
+                   label = round(user_rating, digits = 1),
+                   fontface = 'bold'),
+               nudge_y = 0.004,
+               colour = 'white',
+               fill = '#009d8b',
+               alpha = 0.7) +
+
+    scale_y_log10() +
     ggtitle('Mean reating per year of the movie premiere and user rating per year') +
     xlab('Year') +
     ylab('Mean rating')
 
 # Total users ratings per year
-edx %>% 
-    group_by(rating_year) %>% 
-    summarize(total_ratings = n()) %>% 
+edx %>%
+    group_by(rating_year) %>%
+    summarize(total_ratings = n()) %>%
     ggplot(aes(rating_year, total_ratings)) +
-    geom_line() + geom_point() +
+    geom_freqpoly(stat = 'identity', colour = '#00007f') +
+    geom_area(color = "#00007f", fill = "#07b5ff", alpha = 0.7) +
+    geom_label(aes(label = total_ratings,
+                   fontface = 'bold'),
+               colour = 'white',
+               fill = '#00007f',
+               alpha = 0.6,
+               nudge_y = 35000) +
     xlab('Year') +
     ylab('Total ratings')
