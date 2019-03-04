@@ -176,5 +176,42 @@ edx %>%
                fill = '#00007f',
                alpha = 0.6,
                nudge_y = 35000) +
+    ggtitle('Total users ratings per year') +
     xlab('Year') +
     ylab('Total ratings')
+
+# Total ratings per rating
+edx %>%
+    group_by(rating) %>%
+    summarize(total_ratings = n()) %>%
+    ggplot(aes(rating, total_ratings)) +
+    geom_bar(stat = 'identity', colour = '#1a7c00', fill = '#00bc0f', alpha = .7) +
+    geom_label(aes(label = total_ratings,
+                   fontface = 'bold'),
+               colour = 'white',
+               fill = '#57bc40',
+               alpha = 0.6,
+               nudge_y = 70000) +
+    ggtitle('Total ratings per rating') +
+    xlab('Rating') +
+    ylab('Total ratings')
+
+# ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
+# Predictive                                                                   #
+# ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ #
+# 
+# models <- c("glm", "lda",  "naive_bayes",  "svmLinear", "gamboost",  "gamLoess",
+#             "qda", "knn", "kknn", "loclda", "gam", "rf", "ranger",  "wsrf",
+#             "Rborist", "avNNet", "mlp", "monmlp", "adaboost", "gbm",
+#             "svmRadial", "svmRadialCost", "svmRadialSigma")
+# 
+# 
+# train_models <- lapply(models, function(m) {
+#     train(rating ~ ., method = m, data = edx)
+# })
+# 
+# 
+# train_models <- 'knn'
+
+
+
